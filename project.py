@@ -1,10 +1,9 @@
 import csv
 import os
+from igraph.remote.gephi import GephiGraphStreamer, GephiConnection
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
-import itertools
-import community
 import igraph
 
 try:
@@ -20,53 +19,42 @@ HOUSE_MEMBERS_FOLDER = my_path + "/cosponsorship2010/house_members"
 SENATE_MEMBERS_FOLDER = my_path + "/cosponsorship2010/senate_members"
 HOUSE_MATRIX_FOLDER = my_path + "/cosponsorship2010/house_matrices"
 SENATE_MATRIX_FOLDER = my_path + "/cosponsorship2010/senate_matrices"
-SUPPORTED_CONGRESSES = ["%03d" % x for x in range(95, 111)]
-
-
-# SUPPORTED_CONGRESSES = ["%03d" % x for x in range(110, 111)]
+SUPPORTED_CONGRESSES = ["%03d" % x for x in range(93, 111)]
 
 
 # (congress #, icpsr #) -> party #
-def load_party_data():
-    hReader = csv.reader(open(HOUSE_CSV_PATH, 'r'))
-    hReader.__next__()
-    sReader = csv.reader(open(SENATE_CSV_PATH, 'r'))
-    sReader.__next__()
-    houseLookup = {}
-    senateLookup = {}
+def load_party_data(which_party = "senate"):
+    if which_party == "senate":
+        reader = csv.reader(open(SENATE_CSV_PATH, 'r'))
+    else:
+        reader = csv.reader(open(HOUSE_CSV_PATH, 'r'))
+    reader.__next__()
+    party_lookup = {}
 
-    for row in hReader:
-        houseLookup[(int(row[0]), int(row[1]))] = int(row[5])
+    for row in reader:
+        party_lookup[(int(row[0]), int(row[1]))] = int(row[5])
 
-    for row in sReader:
-        senateLookup[(int(row[0]), int(row[1]))] = int(row[5])
-
-    return houseLookup, senateLookup
+    return party_lookup
 
 
 # (congress #, row #) -> (name, party #)
-def load_members():
-    houseLookup, senateLookup = load_party_data()
-    houseMembers = {}
-    senateMembers = {}
+def load_members(which_chamber="senate"):
+    party_lookup = load_party_data(which_chamber)
+    members = {}
 
     for congress in SUPPORTED_CONGRESSES:
-        hReader = csv.reader(open(HOUSE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_house.txt", 'r'))
-        sReader = csv.reader(open(SENATE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_senators.txt", 'r'))
+        if which_chamber == "senate":
+            reader = csv.reader(open(SENATE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_senators.txt", 'r'))
+        else:
+            reader = csv.reader(open(HOUSE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_house.txt", 'r'))
 
-        for i, row in enumerate(hReader):
+        for i, row in enumerate(reader):
             if "NA" in row[2]:
-                # if int(congress) == 93: print(i)
                 continue
-            if (int(congress), int(row[2])) in houseLookup.keys():
-                houseMembers[(int(congress), i)] = (row[0], houseLookup[(int(congress), int(row[2]))])
+            if (int(congress), int(row[2])) in party_lookup.keys():
+                members[(int(congress), i)] = (row[0], party_lookup[(int(congress), int(row[2]))])
 
-        for i, row in enumerate(sReader):
-            if "NA" in row[2]: continue
-            if (int(congress), int(row[2])) in senateLookup.keys():
-                senateMembers[(int(congress), i)] = (row[0], senateLookup[(int(congress), int(row[2]))])
-
-    return houseMembers, senateMembers
+    return members
 
 
 def _load_adjacency_matrix(bill_data):
@@ -88,29 +76,32 @@ def _load_adjacency_matrix(bill_data):
     return result
 
 
-def load_adjacency_matrices(which_congress):
+def load_adjacency_matrices(which_congress, which_chamber = "senate"):
     which_congress = "%03d" % int(which_congress)
 
-    bill_data = []
-    reader = csv.reader(open(my_path + "/cosponsorship2010/house_matrices/%s_housematrix.txt" % which_congress, 'r'))
-    for row in reader: bill_data.append(row)
-    house_matrix = _load_adjacency_matrix(bill_data)
+    if which_chamber == "senate":
+        reader = csv.reader(open(my_path + "/cosponsorship2010/senate_matrices/%s_senmatrix.txt" % which_congress, 'r'))
+    else:
+        reader = csv.reader(open(my_path + "/cosponsorship2010/house_matrices/%s_housematrix.txt" % which_congress, 'r'))
 
     bill_data = []
-    reader = csv.reader(open(my_path + "/cosponsorship2010/senate_matrices/%s_senmatrix.txt" % which_congress, 'r'))
     for row in reader: bill_data.append(row)
-    senate_matrix = _load_adjacency_matrix(bill_data)
+    adj_matrix = _load_adjacency_matrix(bill_data)
 
-    return house_matrix, senate_matrix
+    return adj_matrix
 
 
 def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_connected_only=True):
-    index = 1
-    if which_chamber == "house": index = 0
-
-    adj_matrix = load_adjacency_matrices(congress)[index]
+    adj_matrix = load_adjacency_matrices(congress, which_chamber)
+    member_lookup = load_members(which_chamber=which_chamber)
 
     G = igraph.Graph()
+    for i in range(len(adj_matrix)):
+        if (int(congress), i) in member_lookup.keys():
+            member = member_lookup[(int(congress), i)]
+            G.add_vertex(i, label=member[0], party=member[1])
+        else:
+            G.add_vertex(i)
     G.add_vertices(list(range(0, len(adj_matrix))))  # setup our graph
 
     for row in range(len(adj_matrix)):
@@ -127,11 +118,9 @@ def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_con
 
     return G
 
-def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_connected_only=True):
-    index = 1
-    if which_chamber == "house": index = 0
 
-    adj_matrix = load_adjacency_matrices(congress)[index]
+def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_connected_only=True):
+    adj_matrix = load_adjacency_matrices(congress, which_chamber)
 
     G = nx.Graph()
     for i in range(0, len(adj_matrix)): G.add_node(i)  # setup our graph
@@ -143,22 +132,45 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
 
     if return_largest_connected_only:
         G = sorted(nx.connected_component_subgraphs(G), key=len, reverse=True)[0]
-        return G
 
     return G
 
 
-def plot_degree_distributions(chamber="senate"):
-    house_members, senate_members = load_members()
-    member_dict = {"house": house_members, "senate": senate_members}
-    chamber_members = member_dict[chamber]
-    fig, ax = plt.subplots()
-    colors = ['r', 'b', 'c', 'k', 'g']
-    style = [':', '-']
+def output_to_gexf(G, congress, which_house):
+    file = open(congress + "_" + which_house + "_cosponsorship.gexf", 'w')
+    file.write("""<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">
+    <meta lastmodifieddate="2009-03-20">
+        <creator>Tom Werner</creator>
+        <description>%s %s cosponsorship network</description>
+    </meta>
+    <graph mode="static" defaultedgetype="directed">\n""" % (congress, which_house))
+    file.write("\t\t<nodes>\n")
+    for node in G.vs:
+        file.write('\t\t\t<node id="%d" label="%s" party="%s"/>\n' % (node.index, node['label'], node['party']))
+    file.write("\t\t</nodes>\n")
+
+    file.write("\t\t<edges>\n")
+    for edge in G.es:
+        file.write('<edge id="%d" source="%d" target="%d" weighted="%d" />\n' % (edge.index, edge.source, edge.target, edge['weight']))
+    file.write("\t\t</edges>\n")
+    file.write("""
+    </graph>
+</gexf>\n""")
+
+
+
+
+    file.close()
+
+
+def detect_communities(chamber="senate"):
+    chamber_members = load_members(which_chamber=chamber)
 
     for congress in SUPPORTED_CONGRESSES:
         print("-" * 80 + "\nCongress: " + congress)
         G = get_cosponsorship_graph(congress, which_chamber=chamber)
+        output_to_gexf(G, congress, chamber)
 
         coms = G.community_walktrap(weights=G.es['weight'])
         print("Optimal modularity:", coms.optimal_count)
@@ -169,28 +181,38 @@ def plot_degree_distributions(chamber="senate"):
             print("-" * 40)
             print("Dems:", len([temp for temp in members if temp[1] == 100]))
             print("Reps:", len([temp for temp in members if temp[1] == 200]))
-            # return
-            # degrees = np.sum(adj_matrix, axis=0)
-            # max_degree = max(degrees)
-            # degrees = degrees / max_degree
-            # max_degree = 1
-            #
-            # x_values = np.linspace(0, max_degree, len(set(degrees)))
-            # y_values = np.zeros(len(x_values))
-            # for i, x_value in enumerate(x_values):
-            #     y_values[i] = len([x for x in degrees if x > x_value])
-            # y_values = y_values / max(y_values)
-            #
-            # ax.plot(x_values, y_values, colors[int(congress) % len(colors)] + style[int(congress) % len(style)], label=str(congress))
+        print(len([cluster for cluster in clusters if len(cluster) <= 10]), "clusters with less than 10 people.")
+        input("waiting...")
 
-            # # Shrink current axis by 20%
-            # box = ax.get_position()
-            # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            #
-            # # Put a legend to the right of the current axis
-            # ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-            # plt.show()
-#plot_degree_distributions()
+def plot_degree_distributions(chamber="senate"):
+    fig, ax = plt.subplots()
+    colors = ['r', 'b', 'c', 'k', 'g']
+    style = [':', '-']
+
+    for congress in SUPPORTED_CONGRESSES:
+        adj_matrix = load_adjacency_matrices(congress, chamber)
+        degrees = np.sum(adj_matrix, axis=0)
+        max_degree = max(degrees)
+        degrees = degrees / max_degree
+        max_degree = 1
+
+        x_values = np.linspace(0, max_degree, len(set(degrees)))
+        y_values = np.zeros(len(x_values))
+        for i, x_value in enumerate(x_values):
+            y_values[i] = len([x for x in degrees if x > x_value])
+        y_values = y_values / max(y_values)
+
+        ax.plot(x_values, y_values, colors[int(congress) % len(colors)] + style[int(congress) % len(style)], label=str(congress))
+
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Put a legend to the right of the current axis
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.show()
+
+# plot_degree_distributions()
 
 # house_members, senate_members = load_members()
 # G = get_cosponsorship_graph_nx("093", which_chamber="senate")
@@ -213,7 +235,8 @@ def plot_degree_distributions(chamber="senate"):
 #
 # plt.show()
 
-def get_cosponsor_pie_chart():
+
+def get_cosponsor_pie_chart(which_chamber="senate"):
     x_axis = []
     bipartisan = []
     dem_dem = []
@@ -222,7 +245,7 @@ def get_cosponsor_pie_chart():
     members = house_members
 
     for congress in SUPPORTED_CONGRESSES:
-        G = get_cosponsorship_graph_nx(congress, which_chamber="house")
+        G = get_cosponsorship_graph_nx(congress, which_chamber=which_chamber)
 
         cosponsor_count = {
             100*100: 0,  # dem-dem
@@ -265,11 +288,11 @@ def get_cosponsor_pie_chart():
     ax.plot(x_axis, dem_dem, 'b', label="% democrat cosponsorship")
     ax.plot(x_axis, rep_rep, 'r', label="% republican cosponsorship")
 
-    #Shrink current axis by 20%
+    # Shrink current axis by 20%
     box = ax.get_position()
     plt.ylim([0, 60])
     plt.xlim([90, 112])
-    plt.title("House Cosponsorship Breakdown")
+    plt.title(which_chamber + " Cosponsorship Breakdown")
     plt.xlabel("Congressional Session")
     plt.ylabel("Percent of total cosponsorships")
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
@@ -278,8 +301,6 @@ def get_cosponsor_pie_chart():
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.show()
 
-
-
-
 # get_cosponsor_pie_chart()
-plot_degree_distributions("house")
+detect_communities("house")
+# plot_degree_distributions("house")
