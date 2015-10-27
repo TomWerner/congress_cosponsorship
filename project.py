@@ -139,7 +139,7 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
 def output_to_gexf(G, congress, which_house):
     file = open(congress + "_" + which_house + "_cosponsorship.gexf", 'w')
     file.write("""<?xml version="1.0" encoding="UTF-8"?>
-<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.2draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd">
     <meta lastmodifieddate="2009-03-20">
         <creator>Tom Werner</creator>
         <description>%s %s cosponsorship network</description>
@@ -147,7 +147,13 @@ def output_to_gexf(G, congress, which_house):
     <graph mode="static" defaultedgetype="directed">\n""" % (congress, which_house))
     file.write("\t\t<nodes>\n")
     for node in G.vs:
-        file.write('\t\t\t<node id="%d" label="%s" party="%s"/>\n' % (node.index, node['label'], node['party']))
+        file.write('\t\t\t<node id="%d" label="%s">\n' % (node.index, node['label']))
+        if node['community_number'] is not None:
+            file.write('\t\t\t\t<attvalues>\n')
+            file.write('\t\t\t\t\t<attvalue for="modularity_class" value="%d"></attvalue>\n' % node['community_number'])
+            file.write('\t\t\t\t</attvalues>\n')
+            file.write('\t\t\t\t<viz:color r="%d" g="%d" b="%d"></viz:color>\n' % (node['red'], node['green'], node['blue']))
+        file.write('\t\t\t</node>\n')
     file.write("\t\t</nodes>\n")
 
     file.write("\t\t<edges>\n")
@@ -157,11 +163,8 @@ def output_to_gexf(G, congress, which_house):
     file.write("""
     </graph>
 </gexf>\n""")
-
-
-
-
     file.close()
+
 
 
 def detect_communities(chamber="senate"):
@@ -170,19 +173,31 @@ def detect_communities(chamber="senate"):
     for congress in SUPPORTED_CONGRESSES:
         print("-" * 80 + "\nCongress: " + congress)
         G = get_cosponsorship_graph(congress, which_chamber=chamber)
-        output_to_gexf(G, congress, chamber)
 
         coms = G.community_walktrap(weights=G.es['weight'])
         print("Optimal modularity:", coms.optimal_count)
         clusters = coms.as_clustering(coms.optimal_count)
-        for cluster in [cluster for cluster in clusters if len(cluster) > 10]:
+        for i, cluster in enumerate(clusters):
             members = [chamber_members[(int(congress), x)] for x in cluster if
                        (int(congress), x) in chamber_members.keys()]
-            print("-" * 40)
-            print("Dems:", len([temp for temp in members if temp[1] == 100]))
-            print("Reps:", len([temp for temp in members if temp[1] == 200]))
+            num_dems = len([temp for temp in members if temp[1] == 100])
+            num_reps = len([temp for temp in members if temp[1] == 200])
+
+            for node in cluster:
+                if num_dems == 0 and num_reps == 0:
+                    continue
+                G.vs[node]['community_number'] = i
+                G.vs[node]['red'] = int((num_reps / (num_dems + num_reps)) * 255)
+                G.vs[node]['green'] = 0
+                G.vs[node]['blue'] = int((num_dems / (num_dems + num_reps)) * 255)
+
+            if len(cluster) > 10:
+                print("-" * 40)
+                print("Dems:", num_dems)
+                print("Reps:", num_reps)
+        output_to_gexf(G, congress, chamber)
         print(len([cluster for cluster in clusters if len(cluster) <= 10]), "clusters with less than 10 people.")
-        input("waiting...")
+
 
 def plot_degree_distributions(chamber="senate"):
     fig, ax = plt.subplots()
@@ -302,5 +317,5 @@ def get_cosponsor_pie_chart(which_chamber="senate"):
     plt.show()
 
 # get_cosponsor_pie_chart()
-detect_communities("house")
+detect_communities("senate")
 # plot_degree_distributions("house")
