@@ -57,6 +57,28 @@ def load_members(which_chamber="senate"):
     return members
 
 
+# (congress #, row #) -> (name, years_in_chamber)
+def load_member_seniority(which_chamber="senate"):
+    # Thomas ID -> years_in_chamber
+    year_count = {}
+    members = {}
+
+    for congress in SUPPORTED_CONGRESSES:
+        if which_chamber == "senate":
+            reader = csv.reader(open(SENATE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_senators.txt", 'r'))
+        else:
+            reader = csv.reader(open(HOUSE_MEMBERS_FOLDER + "/" + str(int(congress)) + "_house.txt", 'r'))
+
+        for i, row in enumerate(reader):
+            year_count[int(row[1])] = year_count.get(int(row[1]), 0) + 2  # 2 years per congress
+            if "NA" in row[2]:
+                continue
+            if int(row[1]) in year_count.keys():
+                members[(int(congress), i)] = (row[0], year_count[int(row[1])])
+    return members
+
+
+
 def _load_adjacency_matrix(bill_data):
     result = np.zeros((len(bill_data), len(bill_data)))
     for billCol in range(len(bill_data[0])):
@@ -76,7 +98,7 @@ def _load_adjacency_matrix(bill_data):
     return result
 
 
-def load_adjacency_matrices(which_congress, which_chamber = "senate"):
+def load_adjacency_matrices(which_congress, which_chamber="senate"):
     which_congress = "%03d" % int(which_congress)
 
     if which_chamber == "senate":
@@ -166,7 +188,6 @@ def output_to_gexf(G, congress, which_house):
     file.close()
 
 
-
 def detect_communities(chamber="senate"):
     chamber_members = load_members(which_chamber=chamber)
 
@@ -226,29 +247,6 @@ def plot_degree_distributions(chamber="senate"):
     # Put a legend to the right of the current axis
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.show()
-
-# plot_degree_distributions()
-
-# house_members, senate_members = load_members()
-# G = get_cosponsorship_graph_nx("093", which_chamber="senate")
-# degs = G.degree()
-# sorted_degs = sorted(degs, key=degs.get, reverse=True)
-# # G = G.subgraph(sorted_degs[0:40])
-# # print(G.degree())
-#
-# labels = {node: senate_members[(int("093"), node)] for node in G.nodes()}
-# pos = nx.spring_layout(G)
-#
-# nx.draw_networkx_nodes(G,pos,
-#                        nodelist=[node for node in G.nodes() if senate_members[(int("093"), node)][1] == 100],
-#                        node_color='b', alpha=0.8)
-# nx.draw_networkx_nodes(G,pos,
-#                        nodelist=[node for node in G.nodes() if senate_members[(int("093"), node)][1] == 200],
-#                        node_color='r', alpha=0.8)
-# nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5)
-# nx.draw_networkx_labels(G, pos, labels, font_size=8)
-#
-# plt.show()
 
 
 def get_cosponsor_pie_chart(which_chamber="senate"):
@@ -317,5 +315,20 @@ def get_cosponsor_pie_chart(which_chamber="senate"):
     plt.show()
 
 # get_cosponsor_pie_chart()
-detect_communities("senate")
+# detect_communities("senate")
 # plot_degree_distributions("house")
+
+G = get_cosponsorship_graph(100, "senate", True)
+seniority_lookup = load_member_seniority("senate")
+
+x_axis = []
+y_axis = []
+
+for node in G.vs:
+    years = seniority_lookup[(100, int(node.index))][1]
+    x_axis.append(years)
+    IN = 2
+    y_axis.append(G.degree(node, mode=IN))
+
+plt.scatter(x_axis, y_axis)
+plt.show()
