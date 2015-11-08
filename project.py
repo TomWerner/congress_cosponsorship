@@ -175,6 +175,10 @@ def output_to_gexf(G, congress, which_house):
             file.write('\t\t\t\t\t<attvalue for="modularity_class" value="%d"></attvalue>\n' % node['community_number'])
             file.write('\t\t\t\t</attvalues>\n')
             file.write('\t\t\t\t<viz:color r="%d" g="%d" b="%d"></viz:color>\n' % (node['red'], node['green'], node['blue']))
+            # if node['party'] == 100:
+            #     file.write('\t\t\t\t<viz:color r="%d" g="%d" b="%d"></viz:color>\n' % (255, 0, 0))
+            # if node['party'] == 200:
+            #     file.write('\t\t\t\t<viz:color r="%d" g="%d" b="%d"></viz:color>\n' % (0, 0, 255))
         file.write('\t\t\t</node>\n')
     file.write("\t\t</nodes>\n")
 

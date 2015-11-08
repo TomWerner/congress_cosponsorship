@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 
 cosponsorship2010/*.txt
+.idea/*
 
 # C extensions
 *.so
