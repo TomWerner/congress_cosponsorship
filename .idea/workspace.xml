@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd4448ab-94c8-48f8-8591-4d66275e11c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/093_house_cosponsorship.gexf" afterPath="$PROJECT_DIR$/093_house_cosponsorship.gexf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/congress_cosponsorship.iml" afterPath="$PROJECT_DIR$/.idea/congress_cosponsorship.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.py" afterPath="$PROJECT_DIR$/project.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -22,7 +17,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/congress_cosponsorship$project.coverage" NAME="project Coverage Results" MODIFIED="1445987167384" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/congress_cosponsorship$project.coverage" NAME="project Coverage Results" MODIFIED="1448174213024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -39,25 +34,52 @@
       <file leaf-file-name="project.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.2205882" vertical-offset="3163" max-vertical-offset="4046">
-              <caret line="319" column="26" selection-start-line="319" selection-start-column="26" selection-end-line="319" selection-end-column="26" />
+            <state vertical-scroll-proportion="0.23449612" vertical-offset="2174" max-vertical-offset="3706">
+              <caret line="464" column="28" selection-start-line="464" selection-start-column="28" selection-end-line="464" selection-end-column="28" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#7921#8908#0" expanded="false" />
-                <element signature="e#9875#12244#0" expanded="false" />
+                <element signature="e#848#1152#0" expanded="false" />
+                <element signature="e#1242#1902#0" expanded="false" />
+                <element signature="e#2010#2734#0" expanded="false" />
+                <element signature="e#3801#4428#0" expanded="false" />
+                <element signature="e#4504#4976#0" expanded="false" />
+                <element signature="e#5082#6018#0" expanded="false" />
+                <element signature="e#6127#6612#0" expanded="false" />
+                <element signature="e#6665#8447#0" expanded="false" />
+                <element signature="e#8496#10364#0" expanded="false" />
+                <element signature="e#10420#11407#0" expanded="false" />
+                <element signature="e#11467#13836#0" expanded="false" />
+                <element signature="e#13904#16738#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="093_house_cosponsorship.gexf" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
-          <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
-            <state />
-          </provider>
+      <file leaf-file-name="animation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/animation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.6" vertical-offset="104" max-vertical-offset="318070">
-              <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="19395" max-vertical-offset="19924">
+              <caret line="1170" column="0" selection-start-line="1170" selection-start-column="0" selection-end-line="1170" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/tkinter/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="6658" max-vertical-offset="65552">
+              <caret line="404" column="0" selection-start-line="404" selection-start-column="0" selection-end-line="404" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="animation.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Anaconda3/Lib/site-packages/matplotlib/animation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="17538" max-vertical-offset="18683">
+              <caret line="1027" column="8" selection-start-line="1027" selection-start-column="8" selection-end-line="1027" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -82,7 +104,7 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1928" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
@@ -138,7 +160,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="taynaud-python-louvain-f56ac904d92c" />
+              <option name="myItemId" value="renders" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -152,7 +174,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="renders" />
+              <option name="myItemId" value="cosponsorship2010" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -165,13 +187,14 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../bigdata" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -185,7 +208,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Anaconda3\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\Tom\AppData\Local\Programs\Python\Python35\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -411,8 +434,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -420,13 +443,13 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28896105" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29329005" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29297298" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26066098" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2835821" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39935064" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39783785" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -460,20 +483,273 @@
           <line>1117</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://C:/Anaconda3/Lib/site-packages/matplotlib/animation.py</url>
+          <line>765</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/project.py</url>
+          <line>467</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/animation.py</url>
+          <line>1170</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/animation.py</url>
+          <line>773</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/animation.py</url>
+          <line>804</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="5" />
+      <option name="time" value="19" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4726">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Anaconda3/Lib/site-packages/numpy/lib/function_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="31750" max-vertical-offset="65654">
+          <caret line="1903" column="4" selection-start-line="1903" selection-start-column="4" selection-end-line="1903" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm40/system/python_stubs/1013586911/igraph/_igraph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="62593" max-vertical-offset="96237">
+          <caret line="3686" column="8" selection-start-line="3686" selection-start-column="8" selection-end-line="3686" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5916">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3208" max-vertical-offset="4131">
+          <caret line="248" column="31" selection-start-line="248" selection-start-column="31" selection-end-line="248" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4131">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4131">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4131">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/093_house_cosponsorship.gexf">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/project.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1190" max-vertical-offset="2618">
           <caret line="139" column="61" selection-start-line="139" selection-start-column="61" selection-end-line="139" selection-end-column="61" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#7921#8908#0" expanded="false" />
-            <element signature="e#9875#12244#0" expanded="false" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -485,7 +761,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -493,7 +768,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="238">
           <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -503,8 +777,18 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#7921#8908#0" expanded="false" />
-            <element signature="e#9875#12244#0" expanded="false" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -513,7 +797,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -523,8 +806,18 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#7921#8908#0" expanded="false" />
-            <element signature="e#9875#12244#0" expanded="false" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -533,7 +826,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -541,7 +833,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.03794643" vertical-offset="0" max-vertical-offset="896">
           <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -549,7 +840,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="69326">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -558,9 +848,8 @@
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.6" vertical-offset="104" max-vertical-offset="318070">
+        <state vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="318070">
           <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -569,14 +858,171 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/renders/senate_093.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://C:/Anaconda3/Lib/site-packages/numpy/lib/function_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2362949" vertical-offset="31750" max-vertical-offset="65654">
+          <caret line="1903" column="4" selection-start-line="1903" selection-start-column="4" selection-end-line="1903" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_93.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_94.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_103.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://C:/Anaconda3/Lib/site-packages/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33226836" vertical-offset="24646" max-vertical-offset="64328">
+          <caret line="1495" column="4" selection-start-line="1495" selection-start-column="4" selection-end-line="1495" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_93.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_102.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_104.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_106.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_house_108.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm40/system/python_stubs/1013586911/igraph/_igraph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="29529" max-vertical-offset="96237">
+          <caret line="1762" column="16" selection-start-line="1762" selection-start-column="16" selection-end-line="1762" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_94.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_95.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_96.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_97.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_99.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/renders/degree_distr_plt_senate_98.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/axes/_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="50569" max-vertical-offset="63036">
+          <caret line="3026" column="13" selection-start-line="3026" selection-start-column="13" selection-end-line="3026" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="26480" max-vertical-offset="65416">
+          <caret line="1603" column="0" selection-start-line="1603" selection-start-column="0" selection-end-line="1603" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/backends/backend_agg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="8324" max-vertical-offset="9911">
+          <caret line="521" column="0" selection-start-line="521" selection-start-column="0" selection-end-line="521" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6658" max-vertical-offset="65552">
+          <caret line="404" column="0" selection-start-line="404" selection-start-column="0" selection-end-line="404" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Anaconda3/Lib/site-packages/matplotlib/animation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17164" max-vertical-offset="18683">
+          <caret line="1027" column="8" selection-start-line="1027" selection-start-column="8" selection-end-line="1027" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35/Lib/site-packages/matplotlib/animation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="19395" max-vertical-offset="19924">
+          <caret line="1170" column="0" selection-start-line="1170" selection-start-column="0" selection-end-line="1170" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/project.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2205882" vertical-offset="3163" max-vertical-offset="4046">
-          <caret line="319" column="26" selection-start-line="319" selection-start-column="26" selection-end-line="319" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.23449612" vertical-offset="2174" max-vertical-offset="3706">
+          <caret line="464" column="28" selection-start-line="464" selection-start-column="28" selection-end-line="464" selection-end-column="28" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#7921#8908#0" expanded="false" />
-            <element signature="e#9875#12244#0" expanded="false" />
+            <element signature="e#848#1152#0" expanded="false" />
+            <element signature="e#1242#1902#0" expanded="false" />
+            <element signature="e#2010#2734#0" expanded="false" />
+            <element signature="e#3801#4428#0" expanded="false" />
+            <element signature="e#4504#4976#0" expanded="false" />
+            <element signature="e#5082#6018#0" expanded="false" />
+            <element signature="e#6127#6612#0" expanded="false" />
+            <element signature="e#6665#8447#0" expanded="false" />
+            <element signature="e#8496#10364#0" expanded="false" />
+            <element signature="e#10420#11407#0" expanded="false" />
+            <element signature="e#11467#13836#0" expanded="false" />
+            <element signature="e#13904#16738#0" expanded="false" />
           </folding>
         </state>
       </provider>
