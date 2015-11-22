@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 import numpy as np
 import igraph
-import pandas as pd
 
 try:
     __file__
@@ -22,24 +21,46 @@ HOUSE_MATRIX_FOLDER = my_path + "/cosponsorship2010/house_matrices"
 SENATE_MATRIX_FOLDER = my_path + "/cosponsorship2010/senate_matrices"
 SUPPORTED_CONGRESSES = ["%03d" % x for x in range(93, 111)]
 
+# (chamber, congress) -> adj_matrix
+adj_matrix_lookup = {}
+
+# (chamber, congress) -> nx graph
+nx_graph_lookup = {}
+
+# (chamber, congress) -> igraph graph
+igraph_graph_lookup = {}
+
+# (chamber) -> member dict
+member_lookup = {}
+
+# (chamber) - > party dict
+party_lookup = {}
+
 
 # (congress #, icpsr #) -> party #
-def load_party_data(which_party = "senate"):
+def load_party_data(which_party="senate"):
+    if which_party in party_lookup.keys():
+        return party_lookup[which_party]
+
     if which_party == "senate":
         reader = csv.reader(open(SENATE_CSV_PATH, 'r'))
     else:
         reader = csv.reader(open(HOUSE_CSV_PATH, 'r'))
     reader.__next__()
-    party_lookup = {}
+    party_dict = {}
 
     for row in reader:
-        party_lookup[(int(row[0]), int(row[1]))] = int(row[5])
+        party_dict[(int(row[0]), int(row[1]))] = int(row[5])
 
-    return party_lookup
+    party_lookup[which_party] = party_dict
+
+    return party_dict
 
 
 # (congress #, row #) -> (name, party #)
 def load_members(which_chamber="senate"):
+    if which_chamber in member_lookup.keys():
+        return member_lookup[which_chamber]
     party_lookup = load_party_data(which_chamber)
     members = {}
 
@@ -54,7 +75,7 @@ def load_members(which_chamber="senate"):
                 continue
             if (int(congress), int(row[2])) in party_lookup.keys():
                 members[(int(congress), i)] = (row[0], party_lookup[(int(congress), int(row[2]))])
-
+    member_lookup[which_chamber] = members
     return members
 
 
@@ -138,6 +159,8 @@ def _load_adjacency_matrix(bill_data):
 
 
 def load_adjacency_matrices(which_congress, which_chamber="senate"):
+    if (which_chamber, which_congress) in adj_matrix_lookup.keys():
+        return adj_matrix_lookup[(which_chamber, which_congress)]
     which_congress = "%03d" % int(which_congress)
 
     if which_chamber == "senate":
@@ -149,10 +172,13 @@ def load_adjacency_matrices(which_congress, which_chamber="senate"):
     for row in reader: bill_data.append(row)
     adj_matrix = _load_adjacency_matrix(bill_data)
 
+    adj_matrix_lookup[(which_chamber, which_congress)] = adj_matrix
     return adj_matrix
 
 
 def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_connected_only=True):
+    if (which_chamber, congress) in igraph_graph_lookup.keys():
+        return igraph_graph_lookup[(which_chamber, congress)]
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
     member_lookup = load_members(which_chamber=which_chamber)
 
@@ -176,10 +202,13 @@ def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_con
         # print(largest_connected_component)
         G = components.subgraph(list(components).index(largest_connected_component))
 
+    igraph_graph_lookup[(which_chamber, congress)] = G
     return G
 
 
 def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_connected_only=True):
+    if (which_chamber, congress) in nx_graph_lookup.keys():
+        return nx_graph_lookup[(which_chamber, congress)]
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
 
     G = nx.Graph()
@@ -193,6 +222,7 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
     if return_largest_connected_only:
         G = sorted(nx.connected_component_subgraphs(G), key=len, reverse=True)[0]
 
+    nx_graph_lookup[(which_chamber, congress)] = G
     return G
 
 
@@ -273,45 +303,15 @@ def detect_communities(chamber="senate"):
         print(len([cluster for cluster in clusters if len(cluster) <= 10]), "clusters with less than 10 people.")
 
 
-def plot_degree_distributions(chamber="senate"):
-    fig, ax = plt.subplots()
-    colors = ['r', 'b', 'c', 'k', 'g']
-    style = [':', '-']
-
-    for congress in SUPPORTED_CONGRESSES:
-        adj_matrix = load_adjacency_matrices(congress, chamber)
-        degrees = np.sum(adj_matrix, axis=0)
-        max_degree = max(degrees)
-        degrees = degrees / max_degree
-        max_degree = 1
-
-        x_values = np.linspace(0, max_degree, len(set(degrees)))
-        y_values = np.zeros(len(x_values))
-        for i, x_value in enumerate(x_values):
-            y_values[i] = len([x for x in degrees if x > x_value])
-        y_values = y_values / max(y_values)
-
-        ax.plot(x_values, y_values, colors[int(congress) % len(colors)] + style[int(congress) % len(style)], label=str(congress))
-
-    # Shrink current axis by 20%
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-    # Put a legend to the right of the current axis
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.show()
-
-
 def get_cosponsor_pie_chart(which_chamber="senate"):
     x_axis = []
     bipartisan = []
     dem_dem = []
     rep_rep = []
-    house_members, senate_members = load_members()
-    members = house_members
+    members = load_members(which_chamber)
 
     for congress in SUPPORTED_CONGRESSES:
-        G = get_cosponsorship_graph_nx(congress, which_chamber=which_chamber)
+        G = get_cosponsorship_graph(congress, which_chamber=which_chamber)
 
         cosponsor_count = {
             100*100: 0,  # dem-dem
@@ -319,20 +319,17 @@ def get_cosponsor_pie_chart(which_chamber="senate"):
             200*200: 0   # rep-rep
         }
 
-        for node in G.nodes():
-            if (int(congress), node) not in members.keys():
+        for edge in G.es:
+            source = edge.source
+            target = edge.target
+
+            if (int(congress), source) not in members.keys() or (int(congress), target) not in members.keys():
                 continue
-            own_party = members[(int(congress), node)][1]
-
-            neighbors = G.neighbors(node)  # get the neighbors of this node
-            for neighbor in neighbors:
-                if (int(congress), neighbor) not in members.keys():
+            s_party = members[(int(congress), source)][1]
+            t_party = members[(int(congress), target)][1]
+            if s_party * t_party not in cosponsor_count.keys():
                     continue
-                their_party = members[(int(congress), neighbor)][1]
-
-                if their_party * own_party not in cosponsor_count.keys():
-                    continue
-                cosponsor_count[own_party * their_party] = cosponsor_count.get(own_party * their_party, 0) + 1
+            cosponsor_count[s_party * t_party] = cosponsor_count.get(s_party * t_party, 0) + edge['weight']
 
         total_cosponsors = sum(cosponsor_count.values())
         x_axis.append(int(congress))
@@ -365,7 +362,8 @@ def get_cosponsor_pie_chart(which_chamber="senate"):
 
     # Put a legend to the right of the current axis
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.show()
+    # plt.show()
+    plt.savefig(my_path + "/renders/cosponsorship_breakdown")
 
 
 def plot_seniority_degree(congress, which_chamber="senate"):
@@ -397,42 +395,42 @@ def plot_seniority_degree(congress, which_chamber="senate"):
     plt.scatter(seniority, in_degree)
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("In Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_in_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_in_deg")
 
     plt.clf()
     plt.scatter(seniority, out_degree)
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("Out Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_out_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_out_deg")
 
     plt.clf()
     plt.scatter(seniority, np.add(np.array(out_degree), np.array(in_degree)))
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_deg")
 
     plt.clf()
     plt.scatter(seniority, win_degree)
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("Weighted In Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_w_in_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_w_in_deg")
 
     plt.clf()
     plt.scatter(seniority, wout_degree)
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("Weighted Out Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_w_out_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_w_out_deg")
 
     plt.clf()
     plt.scatter(seniority, np.add(np.array(wout_degree), np.array(win_degree)))
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("Weighted Degree")
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\" + which_chamber + "_" + str(congress) + "_w_deg")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "_w_deg")
 
 
 def plot_degree_distribution(which_chamber="senate", weighted=False):
     data = []
-    for congress in SUPPORTED_CONGRESSES[0:4]:
+    for congress in SUPPORTED_CONGRESSES:
         G = get_cosponsorship_graph(congress, which_chamber, return_largest_connected_only=False)
         if not weighted:
             degrees = G.degree()
@@ -465,6 +463,7 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
         data.append((G, degrees, degree_number, degree_count, k, nK, logK, logNK, filename))
 
     def animate_log_log(nframe):
+        plt.clf()
         print("log-log", nframe)
         plt.plot(data[nframe][6], data[nframe][7])  # logK, logNK
         plt.title("Log-Log: " + data[nframe][8])
@@ -475,10 +474,11 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
         plt.ylim(min(min(data, key=lambda x: min(x[7]))[7]), max(max(data, key=lambda x: max(x[7]))[7]))
         plt.xlim(min(min(data, key=lambda x: min(x[6]))[6]), max(max(data, key=lambda x: max(x[6]))[6]))
         trendline(data[nframe][6], data[nframe][7])
-        # plt.savefig(u"C:\\Users\\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\degree_distr_log_log_plt_%s" % data[nframe][8])
+        plt.savefig(my_path + "/renders/degree_distr_log_log_plt_%s" % data[nframe][8])
 
 
     def animate_regular(nframe):
+        plt.clf()
         print("regular", nframe)
         plt.bar(data[nframe][4], data[nframe][5])
         plt.title(data[nframe][8])
@@ -487,25 +487,13 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
             plt.xlabel("Weighted K")
         plt.ylabel("N(K)")
         plt.ylim(0, max(max(data, key=lambda x: max(x[5]))[5]))
-        plt.savefig(u"C:\\Users\\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\degree_distr_plt_%s" % data[nframe][8])
+        plt.savefig(my_path + "/renders/degree_distr_plt_%s" % data[nframe][8])
 
 
     # now we've collected all the data
-    fig = plt.figure(figsize=(5,4))
-    anim = animation.FuncAnimation(fig, animate_log_log, frames=len(data))
-    weighted_str = ""
-    if weighted:
-        weighted_str = " (weighted)"
-    # plt.show()
-    anim.save(u"C:\\Users\\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\gifs\\degree_distr_" + which_chamber + weighted_str + "_log_lot_plt.gif", writer='imagemagick', fps=1)
-    # fig = plt.figure(figsize=(5,4))
-    # anim = animation.FuncAnimation(fig, animate_regular, frames=len(data))
-    # weighted_str = ""
-    # if weighted:
-    #     weighted_str = " (weighted)"
-    # anim.save(u"C:\\Users\\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\gifs\\degree_distr_" + which_chamber + weighted_str + "_plt.gif", writer='imagemagick', fps=1)
-
-
+    for i in range(len(data)):
+        animate_log_log(i)
+        animate_regular(i)
 
 
 def plot_graph_diameter():
@@ -526,17 +514,26 @@ def plot_graph_diameter():
 
     # Put a legend to the right of the current axis
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.savefig("C:\\Users\Tom\\Documents\\fall_2015\\p2psocnet\\congress_cosponsorship\\renders\\congress_diameter")
+    plt.savefig(my_path + "/renders/congress_diameter")
 
 
-# get_cosponsor_pie_chart()
-# detect_communities("senate")
-# plot_degree_distributions("house")
-# plot_seniority_degree(110, "house")
-#
+load_data()
 
+plt.clf()
+get_cosponsor_pie_chart(which_chamber="senate")
+plt.clf()
+get_cosponsor_pie_chart(which_chamber="house")
+plt.clf()
+plot_seniority_degree(110, "senate")
+plt.clf()
+plot_seniority_degree(110, "house")
+plt.clf()
 plot_degree_distribution("senate", weighted=False)
-# plot_degree_distribution("senate", weighted=True)
-# plot_degree_distribution("house", weighted=False)
-# plot_degree_distribution("house", weighted=True)
-# plot_graph_diameter()
+plt.clf()
+plot_degree_distribution("senate", weighted=True)
+plt.clf()
+plot_degree_distribution("house", weighted=False)
+plt.clf()
+plot_degree_distribution("house", weighted=True)
+plt.clf()
+plot_graph_diameter()
