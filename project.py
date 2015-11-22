@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import h5py
 import numpy as np
 import igraph
+import time
 
 try:
     __file__
@@ -96,7 +97,7 @@ def load_member_seniority(which_chamber="senate"):
             if "NA" in row[2]:
                 continue
             if int(row[1]) in year_count.keys():
-                members[(int(congress), i)] = (row[0], year_count[int(row[1])])
+                members[(congress, i)] = (row[0], year_count[int(row[1])])
     return members
 
 
@@ -187,6 +188,7 @@ def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_con
         G = components.subgraph(list(components).index(largest_connected_component))
         igraph_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
         return G
+    print("Creating igraph graph for ", congress, which_chamber, return_largest_connected_only)
 
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
     member_lookup = load_members(which_chamber=which_chamber)
@@ -222,6 +224,7 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
         G = sorted(nx.connected_component_subgraphs(igraph_graph_lookup[(which_chamber, congress, False)]), key=len, reverse=True)[0]
         nx_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
         return G
+    print("Creating nx graph for ", congress, which_chamber, return_largest_connected_only)
 
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
 
@@ -351,10 +354,6 @@ def get_cosponsor_pie_chart(which_chamber="senate"):
         dem_dem.append(cosponsor_count[100 * 100] / total_cosponsors * 100)
         rep_rep.append(cosponsor_count[200 * 200] / total_cosponsors * 100)
 
-        print("%s Bi: %02.02f Dem: %02.02f Rep: %02.02f" % (congress, bipartisan[-1], dem_dem[-1], rep_rep[-1]))
-
-    print("Plotting...")
-
     x_axis = np.array(x_axis)
     bipartisan = np.array(bipartisan)
     dem_dem = np.array(dem_dem)
@@ -392,9 +391,8 @@ def plot_seniority_degree(congress, which_chamber="senate"):
     degree = []
 
     for node in sorted([node for node in G.vs if node['label'] is not None], key=lambda x: x['label']):
-        # print(node['label'], node.index)
         if (congress, int(node.index)) not in seniority_lookup.keys():
-            print(0)
+            print("skipping")
             continue
         years = seniority_lookup[(congress, int(node.index))][1]
 
@@ -405,7 +403,7 @@ def plot_seniority_degree(congress, which_chamber="senate"):
         out_degree.append(sum(1 for edge in G.es if edge.source == node.index))
         degree.append(G.degree(node))
 
-
+    print(len(G.vs))
     plt.scatter(seniority, in_degree)
     plt.xlabel("Years in the " + which_chamber.capitalize())
     plt.ylabel("In Degree")
@@ -476,38 +474,42 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
 
         data.append((G, degrees, degree_number, degree_count, k, nK, logK, logNK, filename))
 
-    def animate_log_log(nframe):
+    def animate_log_log(nframe, loglog_xmin, loglog_xmax, loglog_ymin, loglog_ymax):
         plt.clf()
-        print("log-log", nframe)
         plt.plot(data[nframe][6], data[nframe][7])  # logK, logNK
         plt.title("Log-Log: " + data[nframe][8])
         plt.xlabel("log(K)")
         if weighted:
             plt.xlabel("log(Weighted K)")
         plt.ylabel("log(N(K))")
-        plt.ylim(min(min(data, key=lambda x: min(x[7]))[7]), max(max(data, key=lambda x: max(x[7]))[7]))
-        plt.xlim(min(min(data, key=lambda x: min(x[6]))[6]), max(max(data, key=lambda x: max(x[6]))[6]))
+        plt.xlim(loglog_xmin, loglog_xmax)
+        plt.ylim(loglog_ymin, loglog_ymax)
         trendline(data[nframe][6], data[nframe][7])
         plt.savefig(my_path + "/renders/degree_distr_log_log_plt_%s" % data[nframe][8])
 
 
-    def animate_regular(nframe):
+    def animate_regular(nframe, ymax):
         plt.clf()
-        print("regular", nframe)
         plt.bar(data[nframe][4], data[nframe][5])
         plt.title(data[nframe][8])
         plt.xlabel("K")
         if weighted:
             plt.xlabel("Weighted K")
         plt.ylabel("N(K)")
-        plt.ylim(0, max(max(data, key=lambda x: max(x[5]))[5]))
+        plt.ylim(0, ymax)
         plt.savefig(my_path + "/renders/degree_distr_plt_%s" % data[nframe][8])
 
 
     # now we've collected all the data
+    loglog_xmin = min(min(data, key=lambda x: min(x[6]))[6])
+    loglog_xmax = max(max(data, key=lambda x: max(x[6]))[6])
+    loglog_ymin = min(min(data, key=lambda x: min(x[7]))[7])
+    loglog_ymax = max(max(data, key=lambda x: max(x[7]))[7])
+    regular_ymax = max(max(data, key=lambda x: max(x[5]))[5])
     for i in range(len(data)):
-        animate_log_log(i)
-        animate_regular(i)
+        print(i)
+        animate_log_log(i, loglog_xmin, loglog_xmax, loglog_ymin, loglog_ymax)
+        animate_regular(i, regular_ymax)
 
 
 def plot_graph_diameter():
@@ -531,34 +533,67 @@ def plot_graph_diameter():
     plt.savefig(my_path + "/renders/congress_diameter")
 
 
-f = h5py.File("data/cosponsorship_data.hdf5", "w")
-for chamber in ['house', 'senate']:
-    for congress in SUPPORTED_CONGRESSES:
-        print("Starting %s %s" % (str(congress), chamber))
-        adj_matrix = load_adjacency_matrices(congress, chamber)
-        get_cosponsorship_graph(congress, chamber, False).save("data/" + chamber+str(congress) + "_igraph.pickle", "pickle")
-        nx.write_gpickle(get_cosponsorship_graph_nx(congress, chamber, False), "data/" + chamber + str(congress) + "_nx.pickle")
-        data = f.create_dataset("data/" + chamber + str(congress), adj_matrix.shape, dtype='f')
-        data[0: len(data)] = adj_matrix
-        print("Done with %s %s" % (str(congress), chamber))
+def load_data():
+    start = time.time()
+    try:
+        print("Loading data from /data pickles and hfd5 adj matrices")
+        f = h5py.File('data/cosponsorship_data.hdf5', 'r')
+        for chamber in ['house', 'senate']:
+            for congress in SUPPORTED_CONGRESSES:
+                adj_matrix_lookup[(chamber, congress)] = np.asarray(f[chamber + str(congress)])
+
+                igraph_graph = igraph.load("data/" + chamber + str(congress) + "_igraph.pickle", format="pickle")
+                igraph_graph_lookup[(chamber, congress, False)] = igraph_graph
+
+                nx_graph = nx.read_gpickle("data/" + chamber + str(congress) + "_nx.pickle")
+                nx_graph_lookup[(chamber, congress, False)] = nx_graph
+    except IOError as e:
+        print("Loading data from cosponsorship files")
+        f = h5py.File("data/cosponsorship_data.hdf5", "w")
+        for chamber in ['house', 'senate']:
+            for congress in SUPPORTED_CONGRESSES:
+                print("Starting %s %s" % (str(congress), chamber))
+                adj_matrix = load_adjacency_matrices(congress, chamber)
+                data = f.create_dataset(chamber + str(congress), adj_matrix.shape, dtype='f')
+                data[0: len(data)] = adj_matrix
+
+                # igraph
+                get_cosponsorship_graph(congress, chamber, False).save("data/" + chamber + str(congress) + "_igraph.pickle", "pickle")
+                # networkx
+                nx.write_gpickle(get_cosponsorship_graph_nx(congress, chamber, False), "data/" + chamber + str(congress) + "_nx.pickle")
+
+                print("Done with %s %s" % (str(congress), chamber))
+    print("Data loaded in %d seconds" % (time.time() - start))
 
 
+load_data()
 
+start = time.time()
 # plt.clf()
 # get_cosponsor_pie_chart(which_chamber="senate")
+# print(1)
 # plt.clf()
 # get_cosponsor_pie_chart(which_chamber="house")
+# print(2)
 # plt.clf()
-# plot_seniority_degree(110, "senate")
-# plt.clf()
-# plot_seniority_degree(110, "house")
+plot_seniority_degree('110', "senate")
+# print(3)
+plt.clf()
+plot_seniority_degree('110', "house")
+# print(4)
 # plt.clf()
 # plot_degree_distribution("senate", weighted=False)
+# print(5)
 # plt.clf()
 # plot_degree_distribution("senate", weighted=True)
+# print(6)
 # plt.clf()
 # plot_degree_distribution("house", weighted=False)
+# print(7)
 # plt.clf()
 # plot_degree_distribution("house", weighted=True)
+# print(8)
 # plt.clf()
 # plot_graph_diameter()
+# print(9)
+print("Done: %d" % (time.time() - start))
