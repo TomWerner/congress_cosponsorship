@@ -2,7 +2,7 @@ import csv
 import os
 import networkx as nx
 import matplotlib.pyplot as plt
-from matplotlib import animation
+import h5py
 import numpy as np
 import igraph
 
@@ -177,8 +177,17 @@ def load_adjacency_matrices(which_congress, which_chamber="senate"):
 
 
 def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_connected_only=True):
-    if (which_chamber, congress) in igraph_graph_lookup.keys():
-        return igraph_graph_lookup[(which_chamber, congress)]
+    if (which_chamber, congress, return_largest_connected_only) in igraph_graph_lookup.keys():
+        return igraph_graph_lookup[(which_chamber, congress, return_largest_connected_only)]
+    if (which_chamber, congress, False) in igraph_graph_lookup.keys() and return_largest_connected_only is True:
+        G = igraph_graph_lookup[(which_chamber, congress, False)]
+        components = G.components()
+        # find the largest connected component
+        largest_connected_component = max(components, key=lambda x: len(x))
+        G = components.subgraph(list(components).index(largest_connected_component))
+        igraph_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
+        return G
+
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
     member_lookup = load_members(which_chamber=which_chamber)
 
@@ -202,13 +211,18 @@ def get_cosponsorship_graph(congress, which_chamber="senate", return_largest_con
         # print(largest_connected_component)
         G = components.subgraph(list(components).index(largest_connected_component))
 
-    igraph_graph_lookup[(which_chamber, congress)] = G
+    igraph_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
     return G
 
 
 def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_connected_only=True):
-    if (which_chamber, congress) in nx_graph_lookup.keys():
-        return nx_graph_lookup[(which_chamber, congress)]
+    if (which_chamber, congress, return_largest_connected_only) in nx_graph_lookup.keys():
+        return nx_graph_lookup[(which_chamber, congress, return_largest_connected_only)]
+    if (which_chamber, congress, False) in nx_graph_lookup.keys() and return_largest_connected_only is True:
+        G = sorted(nx.connected_component_subgraphs(igraph_graph_lookup[(which_chamber, congress, False)]), key=len, reverse=True)[0]
+        nx_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
+        return G
+
     adj_matrix = load_adjacency_matrices(congress, which_chamber)
 
     G = nx.Graph()
@@ -222,7 +236,7 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
     if return_largest_connected_only:
         G = sorted(nx.connected_component_subgraphs(G), key=len, reverse=True)[0]
 
-    nx_graph_lookup[(which_chamber, congress)] = G
+    nx_graph_lookup[(which_chamber, congress, return_largest_connected_only)] = G
     return G
 
 
@@ -517,23 +531,34 @@ def plot_graph_diameter():
     plt.savefig(my_path + "/renders/congress_diameter")
 
 
-load_data()
+f = h5py.File("data/cosponsorship_data.hdf5", "w")
+for chamber in ['house', 'senate']:
+    for congress in SUPPORTED_CONGRESSES:
+        print("Starting %s %s" % (str(congress), chamber))
+        adj_matrix = load_adjacency_matrices(congress, chamber)
+        get_cosponsorship_graph(congress, chamber, False).save("data/" + chamber+str(congress) + "_igraph.pickle", "pickle")
+        nx.write_gpickle(get_cosponsorship_graph_nx(congress, chamber, False), "data/" + chamber + str(congress) + "_nx.pickle")
+        data = f.create_dataset("data/" + chamber + str(congress), adj_matrix.shape, dtype='f')
+        data[0: len(data)] = adj_matrix
+        print("Done with %s %s" % (str(congress), chamber))
 
-plt.clf()
-get_cosponsor_pie_chart(which_chamber="senate")
-plt.clf()
-get_cosponsor_pie_chart(which_chamber="house")
-plt.clf()
-plot_seniority_degree(110, "senate")
-plt.clf()
-plot_seniority_degree(110, "house")
-plt.clf()
-plot_degree_distribution("senate", weighted=False)
-plt.clf()
-plot_degree_distribution("senate", weighted=True)
-plt.clf()
-plot_degree_distribution("house", weighted=False)
-plt.clf()
-plot_degree_distribution("house", weighted=True)
-plt.clf()
-plot_graph_diameter()
+
+
+# plt.clf()
+# get_cosponsor_pie_chart(which_chamber="senate")
+# plt.clf()
+# get_cosponsor_pie_chart(which_chamber="house")
+# plt.clf()
+# plot_seniority_degree(110, "senate")
+# plt.clf()
+# plot_seniority_degree(110, "house")
+# plt.clf()
+# plot_degree_distribution("senate", weighted=False)
+# plt.clf()
+# plot_degree_distribution("senate", weighted=True)
+# plt.clf()
+# plot_degree_distribution("house", weighted=False)
+# plt.clf()
+# plot_degree_distribution("house", weighted=True)
+# plt.clf()
+# plot_graph_diameter()
