@@ -244,7 +244,7 @@ def get_cosponsorship_graph_nx(congress, which_chamber="senate", return_largest_
 
 
 def output_to_gexf(G, congress, which_house):
-    file = open(congress + "_" + which_house + "_cosponsorship.gexf", 'w')
+    file = open("graph_files/" + congress + "_" + which_house + "_cosponsorship.gexf", 'w')
     file.write("""<?xml version="1.0" encoding="UTF-8"?>
 <gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.2draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd">
     <meta lastmodifieddate="2009-03-20">
@@ -277,15 +277,17 @@ def output_to_gexf(G, congress, which_house):
     file.close()
 
 
-def detect_communities(chamber="senate"):
+def detect_communities(chamber="senate", print_output=False):
     chamber_members = load_members(which_chamber=chamber)
 
     for congress in SUPPORTED_CONGRESSES:
-        print("-" * 80 + "\nCongress: " + congress)
+        if print_output:
+            print("-" * 80 + "\nCongress: " + congress)
         G = get_cosponsorship_graph(congress, which_chamber=chamber)
 
         coms = G.community_walktrap(weights=G.es['weight'])
-        print("Optimal modularity:", coms.optimal_count)
+        if print_output:
+            print("Optimal modularity:", coms.optimal_count)
         clusters = coms.as_clustering(coms.optimal_count)
 
         x_axis = []
@@ -305,19 +307,21 @@ def detect_communities(chamber="senate"):
                 G.vs[node]['green'] = 0
                 G.vs[node]['blue'] = int((num_dems / (num_dems + num_reps)) * 255)
             if len(cluster) > 10:
-                print("-" * 40)
-                print("Dems:", num_dems)
-                print("Reps:", num_reps)
+                if print_output:
+                    print("-" * 40)
+                    print("Dems:", num_dems)
+                    print("Reps:", num_reps)
                 dems.append(num_dems)
                 reps.append(num_reps)
                 x_axis.append(i)
         plt.clf()
-        plt.bar(x_axis, dems, color = 'b')
-        plt.bar(x_axis, reps, color = 'r', bottom = dems)
+        plt.bar(x_axis, dems, color='b')
+        plt.bar(x_axis, reps, color='r', bottom=dems)
         plt.title(str(congress) + " Congress (" + chamber.capitalize() + ") community breakdown")
-        plt.savefig('renders/' + chamber + "_" + str(congress) + ".png")
+        plt.savefig('renders/com_breakdown_' + chamber + "_" + str(congress) + ".png")
         output_to_gexf(G, congress, chamber)
-        print(len([cluster for cluster in clusters if len(cluster) <= 10]), "clusters with less than 10 people.")
+        if print_output:
+            print(len([cluster for cluster in clusters if len(cluster) <= 10]), "clusters with less than 10 people.")
 
 
 def get_cosponsor_pie_chart(which_chamber="senate"):
@@ -566,9 +570,76 @@ def load_data():
     print("Data loaded in %d seconds" % (time.time() - start))
 
 
+def compute_hits(weighted_adj_matrix, iteration=1000):
+    n = len(weighted_adj_matrix)
+
+    Au = np.dot(weighted_adj_matrix.T, weighted_adj_matrix)
+    Hu = np.dot(weighted_adj_matrix, weighted_adj_matrix.T)
+
+    a = np.ones(n)
+    h = np.ones(n)
+
+    for j in range(iteration):
+        done = False
+        new_a = np.dot(a, Au)
+        if np.allclose(new_a, a):
+            done = True
+        a = new_a
+        a = a / sum(a)
+
+        new_h = np.dot(h, Hu)
+        if np.allclose(new_a, a):
+            done &= True
+        h = new_h
+        h = h / sum(h)
+
+        if done:
+            break
+
+    return a, h
+
+
+def rank_by_hits(congress, which_chamber="senate"):
+    adj_matrix = load_adjacency_matrices(congress, which_chamber)
+    authority, hubs = compute_hits(adj_matrix)
+    seniority = load_member_seniority(which_chamber)
+    seniority_array = np.zeros(authority.shape)
+
+    for i in range(len(authority)):
+        if (congress, i) in seniority.keys():
+            seniority_array[i] = seniority[(congress, i)][1]
+        else:
+            seniority_array[i] = -1
+
+    plt.scatter(seniority_array, authority)
+    plt.xlabel("Seniority")
+    plt.ylabel("HITS Authority Score")
+    plt.title(congress.capitalize() + " HITS Authority vs Seniority")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "hits_authority")
+    sorted_indexes = np.argsort(authority)[::-1]
+    print("-" * 80)
+    for i in range(10):
+        print(seniority[(congress, sorted_indexes[i])])
+
+    plt.clf()
+
+    plt.scatter(seniority_array, hubs)
+    plt.xlabel("Seniority")
+    plt.ylabel("HITS Hub Score")
+    plt.title(congress.capitalize() + " HITS Hubs vs Seniority")
+    plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "hits_hub")
+    sorted_indexes = np.argsort(hubs)[::-1]
+    print("-" * 80)
+    for i in range(10):
+        print(seniority[(congress, sorted_indexes[i])])
+
+
+
+
 load_data()
 
 start = time.time()
+
 # plt.clf()
 # get_cosponsor_pie_chart(which_chamber="senate")
 # print(1)
@@ -576,10 +647,10 @@ start = time.time()
 # get_cosponsor_pie_chart(which_chamber="house")
 # print(2)
 # plt.clf()
-plot_seniority_degree('110', "senate")
+# plot_seniority_degree('110', "senate")
 # print(3)
-plt.clf()
-plot_seniority_degree('110', "house")
+# plt.clf()
+# plot_seniority_degree('110', "house")
 # print(4)
 # plt.clf()
 # plot_degree_distribution("senate", weighted=False)
@@ -596,4 +667,17 @@ plot_seniority_degree('110', "house")
 # plt.clf()
 # plot_graph_diameter()
 # print(9)
-print("Done: %d" % (time.time() - start))
+# plt.clf()
+# rank_by_hits("110", "senate")
+# print(10)
+# plt.clf()
+# rank_by_hits("110", "house")
+# print(11)
+# plt.clf()
+detect_communities("senate")
+print(12)
+plt.clf()
+detect_communities("house")
+print(13)
+plt.clf()
+print("Done in %d seconds" % (time.time() - start))
