@@ -127,7 +127,7 @@ def trendline(xd, yd, order=1, c='r', alpha=1, Rval=False):
     ybar = np.sum(yd) / len(yd)
     ssreg = np.sum((p(xd) - ybar) ** 2)
     sstot = np.sum((yd - ybar) ** 2)
-    Rsqr = ssreg / sstot
+    Rsqr = float(ssreg / sstot)
 
     if not Rval:
         #Plot R^2 value
@@ -135,9 +135,10 @@ def trendline(xd, yd, order=1, c='r', alpha=1, Rval=False):
                  '$R^2 = %0.2f$' % Rsqr)
         plt.text(0.8 * maxxd + 0.2 * minxd, 0.8 * np.max(yd) + 0.2 * np.min(yd) - .1,
                  '$Slope = %0.2f$' % slope)
-    else:
-        #Return the R^2 value:
-        return Rsqr
+    # else:
+    #     #Return the R^2 value:
+    #     return Rsqr
+    return slope, Rsqr
 
 
 def _load_adjacency_matrix(bill_data):
@@ -281,6 +282,7 @@ def detect_communities(chamber="senate", print_output=False):
     chamber_members = load_members(which_chamber=chamber)
 
     for congress in SUPPORTED_CONGRESSES:
+        result = congress + "\t"
         if print_output:
             print("-" * 80 + "\nCongress: " + congress)
         G = get_cosponsorship_graph(congress, which_chamber=chamber)
@@ -288,6 +290,7 @@ def detect_communities(chamber="senate", print_output=False):
         coms = G.community_walktrap(weights=G.es['weight'])
         if print_output:
             print("Optimal modularity:", coms.optimal_count)
+        result += str(coms.optimal_count) + "\t"
         clusters = coms.as_clustering(coms.optimal_count)
 
         x_axis = []
@@ -311,9 +314,11 @@ def detect_communities(chamber="senate", print_output=False):
                     print("-" * 40)
                     print("Dems:", num_dems)
                     print("Reps:", num_reps)
+                result += str(num_dems) + "\t" + str(num_reps) + "\t"
                 dems.append(num_dems)
                 reps.append(num_reps)
                 x_axis.append(i)
+        print(result)
         plt.clf()
         plt.bar(x_axis, dems, color='b')
         plt.bar(x_axis, reps, color='r', bottom=dems)
@@ -488,8 +493,9 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
         plt.ylabel("log(N(K))")
         plt.xlim(loglog_xmin, loglog_xmax)
         plt.ylim(loglog_ymin, loglog_ymax)
-        trendline(data[nframe][6], data[nframe][7])
+        slope, rsqrd = trendline(data[nframe][6], data[nframe][7])
         plt.savefig(my_path + "/renders/degree_distr_log_log_plt_%s" % data[nframe][8])
+        return slope, rsqrd
 
 
     def animate_regular(nframe, ymax):
@@ -511,8 +517,9 @@ def plot_degree_distribution(which_chamber="senate", weighted=False):
     loglog_ymax = max(max(data, key=lambda x: max(x[7]))[7])
     regular_ymax = max(max(data, key=lambda x: max(x[5]))[5])
     for i in range(len(data)):
-        print(i)
-        animate_log_log(i, loglog_xmin, loglog_xmax, loglog_ymin, loglog_ymax)
+        # print(i)
+        slope, rsqrd = animate_log_log(i, loglog_xmin, loglog_xmax, loglog_ymin, loglog_ymax)
+        print(which_chamber + "\t" + str(SUPPORTED_CONGRESSES[i]) + "\t" + str(weighted) + "\t" + str(slope) + "\t" + str(rsqrd))
         animate_regular(i, regular_ymax)
 
 
@@ -526,15 +533,43 @@ def plot_graph_diameter():
         for congress in SUPPORTED_CONGRESSES:
             G = get_cosponsorship_graph(congress, chamber, return_largest_connected_only=True)
             y_values.append(G.diameter(G.es['weight']))
-        ax.plot(x_values, y_values, color[chamber], label=str(chamber), lw=2)
+        ax.plot(x_values, y_values, color[chamber], label=str(chamber.capitalize()), lw=2)
+        print(chamber, y_values)
 
     # Shrink current axis by 20%
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    plt.xlabel("Congress")
+    plt.ylabel("Diameter")
+    plt.title("Cosponsorship Network Diameter in Congress")
 
     # Put a legend to the right of the current axis
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.savefig(my_path + "/renders/congress_diameter")
+
+
+def plot_graph_clustering_coefficient():
+    color = {"house": "k", "senate": "k:"}
+    fig, ax = plt.subplots()
+
+    for chamber in ["house", "senate"]:
+        x_values = [int(x) for x in SUPPORTED_CONGRESSES]
+        y_values = []
+        for congress in SUPPORTED_CONGRESSES:
+            G = get_cosponsorship_graph(congress, chamber, return_largest_connected_only=True)
+            y_values.append(G.transitivity_avglocal_undirected())
+        ax.plot(x_values, y_values, color[chamber], label=str(chamber.capitalize()), lw=2)
+        print(chamber, y_values)
+
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    plt.xlabel("Congress")
+    plt.ylabel("Avg Clustering Coefficient")
+    plt.title("Average Clustering Coefficient in Congress")
+    # Put a legend to the right of the current axis
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.savefig(my_path + "/renders/congress_clustering_coefficient")
 
 
 def load_data():
@@ -614,12 +649,13 @@ def rank_by_hits(congress, which_chamber="senate"):
     plt.scatter(seniority_array, authority)
     plt.xlabel("Seniority")
     plt.ylabel("HITS Authority Score")
-    plt.title(congress.capitalize() + " HITS Authority vs Seniority")
+    plt.title(str(congress) + " " + which_chamber.capitalize() + " HITS Authority vs Seniority")
     plt.savefig(my_path + "/renders/" + which_chamber + "_" + str(congress) + "hits_authority")
     sorted_indexes = np.argsort(authority)[::-1]
     print("-" * 80)
     for i in range(10):
-        print(seniority[(congress, sorted_indexes[i])])
+        name = seniority[(congress, sorted_indexes[i])][0]
+        print(" ".join(name.split('  ')[::-1]))
 
     plt.clf()
 
@@ -631,7 +667,8 @@ def rank_by_hits(congress, which_chamber="senate"):
     sorted_indexes = np.argsort(hubs)[::-1]
     print("-" * 80)
     for i in range(10):
-        print(seniority[(congress, sorted_indexes[i])])
+        name = seniority[(congress, sorted_indexes[i])][0]
+        print(" ".join(name.split('  ')[::-1]))
 
 
 
@@ -668,16 +705,19 @@ start = time.time()
 # plot_graph_diameter()
 # print(9)
 # plt.clf()
-# rank_by_hits("110", "senate")
-# print(10)
-# plt.clf()
+rank_by_hits("110", "senate")
+print(10)
+plt.clf()
 # rank_by_hits("110", "house")
 # print(11)
 # plt.clf()
-detect_communities("senate")
-print(12)
-plt.clf()
-detect_communities("house")
-print(13)
-plt.clf()
+# detect_communities("senate")
+# print(12)
+# plt.clf()
+# detect_communities("house")
+# print(13)
+# plt.clf()
+# plot_graph_clustering_coefficient()
+# print(14)
+# plt.clf()
 print("Done in %d seconds" % (time.time() - start))
